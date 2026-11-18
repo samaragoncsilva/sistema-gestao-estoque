@@ -2,8 +2,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Produto implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     private static ArrayList<Produto> produtos = new ArrayList<>();
     private static int contador = 0;
 
@@ -70,7 +68,7 @@ public class Produto implements Serializable {
     }
 
     public static ArrayList<Produto> listarProdutos() {
-        return new ArrayList<>(produtos);
+        return produtos;
     }
 
     public void adicionarEstoque(int quantidade) {
@@ -117,10 +115,6 @@ public class Produto implements Serializable {
                 + "\nProdutos com estoque baixo: " + listarEstoqueBaixo().size();
     }
 
-    public static ArrayList<Produto> getProdutos() {
-        return produtos;
-    }
-
     public static void setProdutos(ArrayList<Produto> lista) {
         produtos = lista;
         contador = 0;
@@ -148,24 +142,8 @@ public class Produto implements Serializable {
         return id;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public double getPreco() {
-        return preco;
-    }
-
     public int getQuantidade() {
         return quantidade;
-    }
-
-    public int getEstoqueMinimo() {
-        return estoqueMinimo;
     }
 
     @Override
