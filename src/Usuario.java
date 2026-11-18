@@ -1,9 +1,8 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Serializable;
 
-public abstract class Usuario implements Serializable{
+public abstract class Usuario implements Serializable {
     private String id;
     private String nome;
     private String cpf;
@@ -28,6 +27,7 @@ public abstract class Usuario implements Serializable{
         System.out.println("Id: " + this.id);
         System.out.println("Nome: " + this.nome);
         System.out.println("Cpf: " + this.cpf);
+        System.out.println("Email: " + this.email);
         System.out.println("Telefone: " + this.telefone);
         System.out.println("Login: " + this.login);
         System.out.println("Senha: " + this.senha);
@@ -38,7 +38,7 @@ public abstract class Usuario implements Serializable{
         this.senha = novaSenha;
     }
 
-    public void editarUsuario(Usuario usuario, String nome, String cpf, String login, String senha, boolean ativo) {
+    public static void editarUsuario(Usuario usuario, String nome, String cpf, String login, String senha, boolean ativo) {
         usuario.nome = nome;
         usuario.cpf = cpf;
         usuario.login = login;
@@ -46,17 +46,35 @@ public abstract class Usuario implements Serializable{
         usuario.ativo = ativo;
     }
 
-    public void desativarUsuario(Usuario usuario) {
+    public static void desativarUsuario(Usuario usuario) {
         usuario.ativo = false;
     }
 
-    public boolean autenticar(String login, String senha) {
+    public static boolean autenticar(String login, String senha) {
+        List<Usuario> listaDeUsuarios = listarUsuarios();
 
-        if (this.login.equals(login) && this.senha.equals(senha)) {
-            return true;
-        } else {
-            return false;
+        for (Usuario u : listaDeUsuarios) {
+            if (u.getLogin().equals(login) && u.getSenha().equals(senha) && u.isAtivo()) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    public static List<Usuario> listarUsuarios() {
+        List<Usuario> listaDeUsuarios = new ArrayList<>();
+        File arquivo = new File("usuario.dat");
+
+        if (!arquivo.exists()) {
+            return listaDeUsuarios;
+        }
+
+        try (ObjectInputStream leitor = new ObjectInputStream(new FileInputStream(arquivo))) {
+            listaDeUsuarios = (List<Usuario>) leitor.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Erro ao ler o ficheiro: " + e.getMessage());
+        }
+        return listaDeUsuarios;
     }
 
     public String getId() {
@@ -122,21 +140,4 @@ public abstract class Usuario implements Serializable{
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
-
-    public List<Usuario> listarUsuarios() {
-
-        List<Usuario> listaDeUsuarios = new ArrayList<>();
-
-        try (ObjectInputStream leitor = new ObjectInputStream(new FileInputStream("usuario.dat"))) {
-            listaDeUsuarios = (List<Usuario>) leitor.readObject();
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Erro aoo ler o ficheiro." + e.getMessage());
-        }
-        return listaDeUsuarios;
-    }
-    }
-
-
-
-
+}
