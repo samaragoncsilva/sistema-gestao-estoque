@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuProdutos {
@@ -25,29 +25,28 @@ public class MenuProdutos {
                 switch (opcao) {
                     case "1" -> cadastrar(sc);
                     case "2" -> mostrar(Produto.listarProdutos());
-                    case "3" -> System.out.println(encontrar(sc));
+                    case "3" -> encontrar(sc).verProduto();
                     case "4" -> {
                         System.out.print("Nome: ");
-                        mostrar(Produto.buscarPorNome(sc.nextLine()));
+                        mostrar(Produto.buscarProdutosPorNome(sc.nextLine()));
                     }
                     case "5" -> editar(sc);
                     case "6" -> {
-                        System.out.print("ID: ");
-                        boolean excluiu = Produto.excluirProduto(sc.nextLine().trim());
-                        System.out.println(excluiu ? "Produto excluído." : "Produto não encontrado.");
+                        Produto.excluirProduto(encontrar(sc));
+                        System.out.println("Produto excluído.");
                     }
                     case "7" -> {
                         Produto produto = encontrar(sc);
                         produto.adicionarEstoque(lerInt(sc, "Quantidade de entrada: "));
-                        System.out.println("Entrada registrada. " + produto);
+                        produto.verProduto();
                     }
                     case "8" -> {
                         Produto produto = encontrar(sc);
                         produto.retirarEstoque(lerInt(sc, "Quantidade de saída: "));
-                        System.out.println("Saída registrada. " + produto);
+                        produto.verProduto();
                     }
-                    case "9" -> mostrar(Produto.listarEstoqueBaixo());
-                    case "10" -> System.out.println(Produto.gerarRelatorio());
+                    case "9" -> mostrar(Produto.listarProdutosComEstoqueBaixo());
+                    case "10" -> mostrar(Produto.gerarRelatorioEstoque());
                     case "0" -> { }
                     default -> System.out.println("Opção inválida.");
                 }
@@ -62,11 +61,11 @@ public class MenuProdutos {
         String nome = sc.nextLine();
         System.out.print("Descrição: ");
         String descricao = sc.nextLine();
-        double preco = lerDouble(sc, "Preço: ");
+        double precoCompra = lerDouble(sc, "Preço de compra: ");
+        double precoVenda = lerDouble(sc, "Preço de venda: ");
         int quantidade = lerInt(sc, "Quantidade inicial: ");
         int estoqueMinimo = lerInt(sc, "Estoque mínimo: ");
-        Produto produto = Produto.criarProduto(nome, descricao, preco, quantidade, estoqueMinimo);
-        System.out.println("Produto cadastrado: " + produto);
+        Produto.criarProduto(nome, descricao, precoCompra, precoVenda, quantidade, estoqueMinimo).verProduto();
     }
 
     private static void editar(Scanner sc) {
@@ -75,27 +74,28 @@ public class MenuProdutos {
         String nome = sc.nextLine();
         System.out.print("Nova descrição: ");
         String descricao = sc.nextLine();
-        double preco = lerDouble(sc, "Novo preço: ");
+        double precoCompra = lerDouble(sc, "Novo preço de compra: ");
+        double precoVenda = lerDouble(sc, "Novo preço de venda: ");
         int estoqueMinimo = lerInt(sc, "Novo estoque mínimo: ");
-        produto.editarProduto(nome, descricao, preco, estoqueMinimo);
-        System.out.println("Produto atualizado: " + produto);
+        Produto.editarProduto(produto, nome, descricao, precoCompra, precoVenda, estoqueMinimo);
+        produto.verProduto();
     }
 
     private static Produto encontrar(Scanner sc) {
         System.out.print("ID do produto: ");
-        Produto produto = Produto.buscarPorId(sc.nextLine().trim());
+        Produto produto = Produto.buscarProdutoPorID(sc.nextLine().trim());
         if (produto == null) {
             throw new IllegalArgumentException("Produto não encontrado.");
         }
         return produto;
     }
 
-    private static void mostrar(ArrayList<Produto> lista) {
+    private static void mostrar(List<Produto> lista) {
         if (lista.isEmpty()) {
             System.out.println("Nenhum produto encontrado.");
         }
         for (Produto produto : lista) {
-            System.out.println(produto);
+            produto.verProduto();
         }
     }
 

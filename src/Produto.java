@@ -1,73 +1,59 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Produto implements Serializable {
-    private static ArrayList<Produto> produtos = new ArrayList<>();
+    private static List<Produto> produtos = new ArrayList<>();
     private static int contador = 0;
 
     private String id;
     private String nome;
     private String descricao;
-    private double preco;
+    private double precoCompra;
+    private double precoVenda;
     private int quantidade;
     private int estoqueMinimo;
 
-    private Produto(String nome, String descricao, double preco, int quantidade, int estoqueMinimo) {
-        contador++;
-        this.id = "P" + contador;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.preco = preco;
-        this.quantidade = quantidade;
-        this.estoqueMinimo = estoqueMinimo;
+    public void verProduto() {
+        System.out.println(id + " | " + nome + " | " + descricao
+                + " | Compra: R$ " + String.format("%.2f", precoCompra)
+                + " | Venda: R$ " + String.format("%.2f", precoVenda)
+                + " | Qtd: " + quantidade + " | Mín: " + estoqueMinimo
+                + (verificarEstoqueMinimo() ? " | ESTOQUE BAIXO" : ""));
     }
 
-    public static Produto criarProduto(String nome, String descricao, double preco, int quantidade, int estoqueMinimo) {
-        validar(nome, preco, estoqueMinimo);
+    public static Produto criarProduto(String nome, String descricao, double precoCompra, double precoVenda, int quantidade, int estoqueMinimo) {
+        validar(nome, precoCompra, precoVenda, estoqueMinimo);
         if (quantidade < 0) {
             throw new IllegalArgumentException("Quantidade não pode ser negativa.");
         }
-        Produto produto = new Produto(nome, descricao, preco, quantidade, estoqueMinimo);
+        Produto produto = new Produto();
+        contador++;
+        produto.id = "P" + contador;
+        produto.nome = nome;
+        produto.descricao = descricao;
+        produto.precoCompra = precoCompra;
+        produto.precoVenda = precoVenda;
+        produto.quantidade = quantidade;
+        produto.estoqueMinimo = estoqueMinimo;
         produtos.add(produto);
         return produto;
     }
 
-    public void editarProduto(String nome, String descricao, double preco, int estoqueMinimo) {
-        validar(nome, preco, estoqueMinimo);
-        this.nome = nome;
-        this.descricao = descricao;
-        this.preco = preco;
-        this.estoqueMinimo = estoqueMinimo;
+    public static void editarProduto(Produto produto, String nome, String descricao, double precoCompra, double precoVenda, int estoqueMinimo) {
+        validar(nome, precoCompra, precoVenda, estoqueMinimo);
+        produto.nome = nome;
+        produto.descricao = descricao;
+        produto.precoCompra = precoCompra;
+        produto.precoVenda = precoVenda;
+        produto.estoqueMinimo = estoqueMinimo;
     }
 
-    public static boolean excluirProduto(String id) {
-        Produto produto = buscarPorId(id);
-        if (produto == null) {
-            return false;
-        }
-        return produtos.remove(produto);
+    public static void excluirProduto(Produto produto) {
+        produtos.remove(produto);
     }
 
-    public static Produto buscarPorId(String id) {
-        for (Produto produto : produtos) {
-            if (produto.id.equalsIgnoreCase(id)) {
-                return produto;
-            }
-        }
-        return null;
-    }
-
-    public static ArrayList<Produto> buscarPorNome(String nome) {
-        ArrayList<Produto> encontrados = new ArrayList<>();
-        for (Produto produto : produtos) {
-            if (produto.nome.toLowerCase().contains(nome.toLowerCase())) {
-                encontrados.add(produto);
-            }
-        }
-        return encontrados;
-    }
-
-    public static ArrayList<Produto> listarProdutos() {
+    public static List<Produto> listarProdutos() {
         return produtos;
     }
 
@@ -92,8 +78,27 @@ public class Produto implements Serializable {
         return quantidade <= estoqueMinimo;
     }
 
-    public static ArrayList<Produto> listarEstoqueBaixo() {
-        ArrayList<Produto> baixos = new ArrayList<>();
+    public static List<Produto> buscarProdutosPorNome(String nome) {
+        List<Produto> encontrados = new ArrayList<>();
+        for (Produto produto : produtos) {
+            if (produto.nome.toLowerCase().contains(nome.toLowerCase())) {
+                encontrados.add(produto);
+            }
+        }
+        return encontrados;
+    }
+
+    public static Produto buscarProdutoPorID(String id) {
+        for (Produto produto : produtos) {
+            if (produto.id.equalsIgnoreCase(id)) {
+                return produto;
+            }
+        }
+        return null;
+    }
+
+    public static List<Produto> listarProdutosComEstoqueBaixo() {
+        List<Produto> baixos = new ArrayList<>();
         for (Produto produto : produtos) {
             if (produto.verificarEstoqueMinimo()) {
                 baixos.add(produto);
@@ -102,20 +107,13 @@ public class Produto implements Serializable {
         return baixos;
     }
 
-    public static String gerarRelatorio() {
-        int totalItens = 0;
-        double valorTotal = 0;
-        for (Produto produto : produtos) {
-            totalItens += produto.quantidade;
-            valorTotal += produto.quantidade * produto.preco;
-        }
-        return "Produtos cadastrados: " + produtos.size()
-                + "\nItens em estoque: " + totalItens
-                + "\nValor total do estoque: R$ " + String.format("%.2f", valorTotal)
-                + "\nProdutos com estoque baixo: " + listarEstoqueBaixo().size();
+    public static List<Produto> gerarRelatorioEstoque() {
+        List<Produto> relatorio = new ArrayList<>(produtos);
+        relatorio.sort((a, b) -> a.quantidade - b.quantidade);
+        return relatorio;
     }
 
-    public static void setProdutos(ArrayList<Produto> lista) {
+    public static void setProdutos(List<Produto> lista) {
         produtos = lista;
         contador = 0;
         for (Produto produto : lista) {
@@ -126,30 +124,15 @@ public class Produto implements Serializable {
         }
     }
 
-    private static void validar(String nome, double preco, int estoqueMinimo) {
+    private static void validar(String nome, double precoCompra, double precoVenda, int estoqueMinimo) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("O nome é obrigatório.");
         }
-        if (preco < 0) {
-            throw new IllegalArgumentException("O preço não pode ser negativo.");
+        if (precoCompra < 0 || precoVenda < 0) {
+            throw new IllegalArgumentException("Os preços não podem ser negativos.");
         }
         if (estoqueMinimo < 0) {
             throw new IllegalArgumentException("O estoque mínimo não pode ser negativo.");
         }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    @Override
-    public String toString() {
-        return id + " | " + nome + " | R$ " + String.format("%.2f", preco)
-                + " | Qtd: " + quantidade + " | Mín: " + estoqueMinimo
-                + (verificarEstoqueMinimo() ? " | ESTOQUE BAIXO" : "");
     }
 }
