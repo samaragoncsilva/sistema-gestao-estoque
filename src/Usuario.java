@@ -1,8 +1,12 @@
-import java.io.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Usuario implements Serializable {
+
+    // Coleção mantida em memória (compartilhada por todos os usuários)
+    private static List<Usuario> listaDeUsuarios = new ArrayList<>();
+
     private String id;
     private String nome;
     private String cpf;
@@ -21,6 +25,8 @@ public abstract class Usuario implements Serializable {
         this.login = login;
         this.senha = senha;
         this.ativo = ativo;
+
+        listaDeUsuarios.add(this);
     }
 
     public void verUsuario() {
@@ -51,10 +57,10 @@ public abstract class Usuario implements Serializable {
     }
 
     public static boolean autenticar(String login, String senha) {
-        List<Usuario> listaDeUsuarios = listarUsuarios();
-
         for (Usuario u : listaDeUsuarios) {
-            if (u.getLogin().equals(login) && u.getSenha().equals(senha) && u.isAtivo()) {
+            if (u.getLogin().equals(login)
+                    && u.getSenha().equals(senha)
+                    && u.isAtivo()) {
                 return true;
             }
         }
@@ -62,18 +68,15 @@ public abstract class Usuario implements Serializable {
     }
 
     public static List<Usuario> listarUsuarios() {
-        List<Usuario> listaDeUsuarios = new ArrayList<>();
-        File arquivo = new File("usuario.dat");
+        return listaDeUsuarios;
+    }
 
-        if (!arquivo.exists()) {
-            return listaDeUsuarios;
-        }
 
-        try (ObjectInputStream leitor = new ObjectInputStream(new FileInputStream(arquivo))) {
-            listaDeUsuarios = (List<Usuario>) leitor.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Erro ao ler o ficheiro: " + e.getMessage());
-        }
+    public static void setListaDeUsuarios(List<Usuario> novaLista) {
+        listaDeUsuarios = novaLista;
+    }
+
+    public static List<Usuario> getListaDeUsuarios() {
         return listaDeUsuarios;
     }
 
@@ -140,4 +143,5 @@ public abstract class Usuario implements Serializable {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
+
 }
