@@ -76,10 +76,6 @@ public abstract class Usuario implements Serializable {
         listaDeUsuarios = novaLista;
     }
 
-    public static List<Usuario> getListaDeUsuarios() {
-        return listaDeUsuarios;
-    }
-
     public String getId() {
         return id;
     }
