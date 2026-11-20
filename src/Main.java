@@ -1,7 +1,40 @@
 import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        try {
+            Object dados = Persistencia.carregar("dados/produtos.dat");
+
+            if (!(dados instanceof List<?>)) {
+                System.out.println("\nErro: Arquivo de dados não contém uma lista válida de produtos.");
+                return;
+            }
+
+            List<Produto> produtos = new ArrayList<>();
+
+            for (Object objeto : (List<?>) dados) {
+                if (!(objeto instanceof Produto)) {
+                    System.out.println("\nErro: Arquivo de dados contém dados inválidos.");
+                    return;
+                }
+                produtos.add((Produto) objeto);
+            }
+
+            Produto.setProdutos(produtos);
+            System.out.println("\nProdutos carregados: " + produtos.size());
+        
+        } catch (NoSuchFileException e) {
+            System.out.println("\nNenhum arquivo de produtos encontrado.");
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("\nErro ao carregar produtos: " + e.getMessage());
+            return;
+        }
+
         Scanner input = new Scanner(System.in);
         String option = "";
 

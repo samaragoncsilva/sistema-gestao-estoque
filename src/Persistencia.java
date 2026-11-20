@@ -1,5 +1,6 @@
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
 
 public class Persistencia {
     
@@ -20,5 +21,10 @@ public class Persistencia {
         try (ObjectInputStream entrada = new ObjectInputStream(Files.newInputStream(Path.of(caminho)))) {
             return entrada.readObject();
         }
+    }
+
+    public static void salvarProdutos() throws IOException {
+        ArrayList<Produto> produtos = new ArrayList<>(Produto.listarProdutos());
+        salvar(produtos, "dados/produtos.dat");
     }
 }
