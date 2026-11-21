@@ -27,4 +27,9 @@ public class Persistencia {
         ArrayList<Produto> produtos = new ArrayList<>(Produto.listarProdutos());
         salvar(produtos, "dados/produtos.dat");
     }
+
+    public static void salvarUsuarios() throws IOException {
+        ArrayList<Usuario> usuarios = new ArrayList<>(Usuario.listarUsuarios());
+        salvar(usuarios, "dados/usuarios.dat");
+    }
 }

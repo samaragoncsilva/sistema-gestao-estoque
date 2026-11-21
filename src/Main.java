@@ -35,6 +35,35 @@ public class Main {
             return;
         }
 
+        try {
+            Object dados = Persistencia.carregar("dados/usuarios.dat");
+
+            if (!(dados instanceof List<?>)) {
+                System.out.println("\nErro: Arquivo de dados não contém uma lista válida de usuários.");
+                return;
+            }
+
+            List<Usuario> usuarios = new ArrayList<>();
+
+            for (Object objeto : (List<?>) dados) {
+                if (!(objeto instanceof Usuario)) {
+                    System.out.println("\nErro: Arquivo de dados contém dados inválidos.");
+                    return;
+                }
+                usuarios.add((Usuario) objeto);
+            }
+
+            Usuario.setListaDeUsuarios(usuarios);
+            System.out.println("\nUsuários carregados: " + usuarios.size());
+
+        } catch (NoSuchFileException e) {
+            System.out.println("\nNenhum arquivo de usuários encontrado.");
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("\nErro ao carregar usuários: " + e.getMessage());
+            return;
+        }
+
         Scanner input = new Scanner(System.in);
         String option = "";
 
