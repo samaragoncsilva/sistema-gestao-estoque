@@ -1,6 +1,3 @@
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +17,7 @@ public class Funcionario extends Usuario {
     public static Funcionario criarFuncionario(String nome, String cpf, String email, String telefone, String login, String senha, NivelAcesso nivelAcesso) {
         String novoId = String.valueOf(listarUsuarios().size() + 1);
 
-        Funcionario novoFuncionario = new Funcionario(novoId, nome, cpf, email, telefone, login, senha, true, nivelAcesso);
-
-        try (ObjectOutputStream empacotador = new ObjectOutputStream(new FileOutputStream("usuario.dat"))) {
-            empacotador.writeObject(listarUsuarios());
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar funcionário: " + e.getMessage());
-        }
-
-        return novoFuncionario;
+        return new Funcionario(novoId, nome, cpf, email, telefone, login, senha, true, nivelAcesso);
     }
 
     public static void editarFuncionario(Funcionario funcionario, String nome, String cpf, String email, String telefone, String login, String senha, boolean ativo, NivelAcesso nivelAcesso) {
@@ -36,12 +25,6 @@ public class Funcionario extends Usuario {
         funcionario.setEmail(email);
         funcionario.setTelefone(telefone);
         funcionario.setNivelAcesso(nivelAcesso);
-
-        try (ObjectOutputStream empacotador = new ObjectOutputStream(new FileOutputStream("usuario.dat"))) {
-            empacotador.writeObject(listarUsuarios());
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar edição do funcionário: " + e.getMessage());
-        }
     }
 
     public static List<Funcionario> listarFuncionarios() {
