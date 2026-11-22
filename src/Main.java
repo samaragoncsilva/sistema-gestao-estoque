@@ -81,7 +81,7 @@ public class Main {
 
             switch (option) {
                 case "1":
-                    System.out.println("\nAinda não implementado.");
+                    fazerLogin(input);
                     break;
                 case "0":
                     System.out.println("\nEncerrando o sistema.");
@@ -92,5 +92,30 @@ public class Main {
         } while (!option.equals("0"));
 
         input.close();
+    }
+
+    private static void fazerLogin(Scanner input) {
+        System.out.print("\nLogin: ");
+        if (!input.hasNextLine()) {
+            System.out.println("\nEntrada encerrada.");
+            return;
+        }
+
+        String login = input.nextLine().trim();
+        
+        System.out.print("Senha: ");
+        if (!input.hasNextLine()) {
+            System.out.println("\nEntrada encerrada.");
+            return;
+        }
+
+        String senha = input.nextLine().trim();
+
+        if (Usuario.autenticar(login, senha)) {
+            System.out.println("\nLogin realizado com sucesso.");
+            System.out.println("\nIntegração pendente.");
+        } else {
+            System.out.println("\nVocê digitou login ou senha incorretos, ou sua conta foi desativada. Tente novamente.");
+        }
     }
 }
