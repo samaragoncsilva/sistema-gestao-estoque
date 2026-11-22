@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,16 +34,19 @@ public class MenuProdutos {
                     case "5" -> editar(sc);
                     case "6" -> {
                         Produto.excluirProduto(encontrar(sc));
+                        salvar();
                         System.out.println("Produto excluído.");
                     }
                     case "7" -> {
                         Produto produto = encontrar(sc);
                         produto.adicionarEstoque(lerInt(sc, "Quantidade de entrada: "));
+                        salvar();
                         produto.verProduto();
                     }
                     case "8" -> {
                         Produto produto = encontrar(sc);
                         produto.retirarEstoque(lerInt(sc, "Quantidade de saída: "));
+                        salvar();
                         produto.verProduto();
                     }
                     case "9" -> mostrar(Produto.listarProdutosComEstoqueBaixo());
@@ -65,7 +69,9 @@ public class MenuProdutos {
         double precoVenda = lerDouble(sc, "Preço de venda: ");
         int quantidade = lerInt(sc, "Quantidade inicial: ");
         int estoqueMinimo = lerInt(sc, "Estoque mínimo: ");
-        Produto.criarProduto(nome, descricao, precoCompra, precoVenda, quantidade, estoqueMinimo).verProduto();
+        Produto produto = Produto.criarProduto(nome, descricao, precoCompra, precoVenda, quantidade, estoqueMinimo);
+        salvar();
+        produto.verProduto();
     }
 
     private static void editar(Scanner sc) {
@@ -78,7 +84,16 @@ public class MenuProdutos {
         double precoVenda = lerDouble(sc, "Novo preço de venda: ");
         int estoqueMinimo = lerInt(sc, "Novo estoque mínimo: ");
         Produto.editarProduto(produto, nome, descricao, precoCompra, precoVenda, estoqueMinimo);
+        salvar();
         produto.verProduto();
+    }
+
+    private static void salvar() {
+        try {
+            Persistencia.salvarProdutos();
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar produtos: " + e.getMessage());
+        }
     }
 
     private static Produto encontrar(Scanner sc) {
