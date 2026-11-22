@@ -113,9 +113,20 @@ public class Main {
 
         if (Usuario.autenticar(login, senha)) {
             System.out.println("\nLogin realizado com sucesso.");
-            System.out.println("\nIntegração pendente.");
+
+            for (Usuario usuario : Usuario.listarUsuarios()) {
+                if (login.equals(usuario.getLogin()) && senha.equals(usuario.getSenha()) && usuario.isAtivo()) {
+                    System.out.println("Usuário: " + usuario.getNome());
+
+                    if (usuario instanceof Funcionario) {
+                        Funcionario funcionario = (Funcionario) usuario;
+                        System.out.println("Nível de acesso: " + funcionario.getNivelAcesso());
+                    }
+                    break;
+                }
+            }
         } else {
-            System.out.println("\nVocê digitou login ou senha incorretos, ou sua conta foi desativada. Tente novamente.");
+            System.out.println("\nLogin ou senha incorretos, ou conta foi desativada. Tente novamente.");
         }
     }
 }
