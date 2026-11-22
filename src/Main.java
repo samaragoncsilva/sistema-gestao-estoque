@@ -121,6 +121,7 @@ public class Main {
                     if (usuario instanceof Funcionario) {
                         Funcionario funcionario = (Funcionario) usuario;
                         System.out.println("Nível de acesso: " + funcionario.getNivelAcesso());
+                        exibirMenuFuncionario(input, funcionario);
                     }
                     break;
                 }
@@ -128,5 +129,42 @@ public class Main {
         } else {
             System.out.println("\nLogin ou senha incorretos, ou conta foi desativada. Tente novamente.");
         }
+    }
+
+    private static void exibirMenuFuncionario(Scanner input, Funcionario funcionario) {
+        if (funcionario.getNivelAcesso() != NivelAcesso.ADM_TOTAL) {
+            System.out.println("\nNão coloquei os menus para outros níveis de acesso, então só o administrador total pode acessar o sistema. Lembrar de arrumar.");
+            return;
+        }
+        String option;
+
+        do {
+            System.out.println("\n====== MENU DO FUNCIONÁRIO ======\n");
+            System.out.println("1 - Administração de funcionários");
+            System.out.println("2 - Produtos e estoque");
+            System.out.println("0 - Encerrar sessão");
+            System.out.print("\nEscolha uma opção: ");
+
+            if (!input.hasNextLine()) {
+                System.out.println("\nEntrada encerrada.");
+                return;
+            }
+
+            option = input.nextLine().trim();
+
+            switch (option) {
+                case "1":
+                    MenuAdministracao.exibir(input);
+                    break;
+                case "2":
+                    MenuProdutos.exibir(input);
+                    break;
+                case "0":
+                    System.out.println("\nSessão encerrada.");
+                    break;
+                default:
+                    System.out.println("\nOpção inválida. Tente novamente.");
+            }
+        } while (!option.equals("0"));
     }
 }
