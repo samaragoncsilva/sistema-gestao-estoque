@@ -4,7 +4,7 @@ import java.util.List;
 
 public abstract class Usuario implements Serializable {
 
-    // Coleção mantida em memória (compartilhada por todos os usuários)
+
     private static List<Usuario> listaDeUsuarios = new ArrayList<>();
 
     private String id;
@@ -58,10 +58,11 @@ public abstract class Usuario implements Serializable {
 
     public static boolean autenticar(String login, String senha) {
         for (Usuario u : listaDeUsuarios) {
-            if (u.getLogin().equals(login)
-                    && u.getSenha().equals(senha)
+            if (login.equals(u.getLogin())
+                    && senha.equals(u.getSenha())
                     && u.isAtivo()) {
                 return true;
+
             }
         }
         return false;
