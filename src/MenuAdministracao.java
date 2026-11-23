@@ -115,7 +115,7 @@ public class MenuAdministracao {
         String login = sc.nextLine();
         System.out.print("Nova senha: ");
         String senha = sc.nextLine();
-        boolean ativo = lerBoolean(sc, "Ativo (s/n): ");
+        boolean ativo = funcionario.isAtivo();
         NivelAcesso nivel = lerNivel(sc, "Novo nível de acesso");
         Funcionario.editarFuncionario(funcionario, nome, cpf, email, telefone, login, senha, ativo, nivel);
         funcionario.verFuncionario();
@@ -153,10 +153,5 @@ public class MenuAdministracao {
             throw new IllegalArgumentException("Nível inválido.");
         }
         return niveis[indice - 1];
-    }
-
-    private static boolean lerBoolean(Scanner sc, String mensagem) {
-        System.out.print(mensagem);
-        return sc.nextLine().trim().equalsIgnoreCase("s");
     }
 }
