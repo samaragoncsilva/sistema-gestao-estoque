@@ -162,7 +162,7 @@ public class Main {
 
             switch (option) {
                 case "1":
-                    MenuAdministracao.exibir(input);
+                    MenuAdministracao.exibir(input, funcionario);
                     break;
                 case "2":
                     MenuProdutos.exibir(input);
