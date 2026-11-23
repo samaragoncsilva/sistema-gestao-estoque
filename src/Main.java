@@ -54,17 +54,25 @@ public class Main {
             }
 
             Usuario.setListaDeUsuarios(usuarios);
-            System.out.println("\nUsuários carregados: " + usuarios.size());
+            System.out.println("Usuários carregados: " + usuarios.size());
 
         } catch (NoSuchFileException e) {
-            System.out.println("\nNenhum arquivo de usuários encontrado.");
+            System.out.println("Nenhum arquivo de usuários encontrado.");
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("\nErro ao carregar usuários: " + e.getMessage());
+            System.out.println("Erro ao carregar usuários: " + e.getMessage());
             return;
         }
 
         Scanner input = new Scanner(System.in);
+        
+        if (Usuario.listarUsuarios().isEmpty()) {
+            if (!cadastrarAdministradorInicial(input)) {
+                input.close();
+                return;
+            }
+        }
+        
         String option = "";
 
         do {
@@ -166,5 +174,46 @@ public class Main {
                     System.out.println("\nOpção inválida. Tente novamente.");
             }
         } while (!option.equals("0"));
+    }
+
+    private static boolean cadastrarAdministradorInicial(Scanner input) {
+        System.out.println("\n====== CONFIGURAÇÃO INICIAL ======\n");
+        System.out.println("Cadastre o primeiro administrador do sistema.\n");
+
+        String nome = lerCampo(input, "Nome");
+        String cpf = lerCampo(input, "CPF");
+        String email = lerCampo(input, "E-mail");
+        String telefone = lerCampo(input, "Telefone");
+        String login = lerCampo(input, "Login");
+        String senha = lerCampo(input, "Senha");
+
+        if (nome == null || cpf == null || email == null || telefone == null || login == null || senha == null) {
+            System.out.println("\nCadastro interrompido.");
+            return false;
+        }
+
+        try {
+            Funcionario.criarFuncionario(nome, cpf, email, telefone, login, senha, NivelAcesso.ADM_TOTAL);
+            Persistencia.salvarUsuarios();
+            System.out.println("\nAdministrador inicial cadastrado com sucesso.");
+            return true;
+        } catch (IOException e) {
+            System.out.println("\nErro ao salvar o administrador inicial: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private static String lerCampo(Scanner input, String mensagem) {
+        while (true) {
+            System.out.print(mensagem + ": ");
+            if (!input.hasNextLine()) {
+                return null;
+            }
+            String valor = input.nextLine().trim();
+            if (!valor.isEmpty()) {
+                return valor;
+            }
+            System.out.println("\nCampo obrigatório.");
+        }
     }
 }
