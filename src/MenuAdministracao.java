@@ -4,7 +4,13 @@ import java.util.Scanner;
 
 public class MenuAdministracao {
 
-    public static void exibir(Scanner sc) {
+    public static void exibir(Scanner sc, Funcionario logado) {
+        NivelAcesso nivel = logado.getNivelAcesso();
+        if (!podeConsultar(nivel)) {
+            System.out.println("Acesso negado: seu nível não permite administrar funcionários.");
+            return;
+        }
+
         String opcao;
         do {
             System.out.println("\n=== ADMINISTRAÇÃO DE FUNCIONÁRIOS ===");
@@ -21,6 +27,7 @@ public class MenuAdministracao {
             try {
                 switch (opcao) {
                     case "1":
+                        exigir(podeCadastrarEditar(nivel));
                         cadastrar(sc);
                         Persistencia.salvarUsuarios();
                         break;
@@ -34,10 +41,12 @@ public class MenuAdministracao {
                         encontrar(sc).verFuncionario();
                         break;
                     case "5":
+                        exigir(podeCadastrarEditar(nivel));
                         editar(sc);
                         Persistencia.salvarUsuarios();
                         break;
                     case "6":
+                        exigir(podeDesativar(nivel));
                         Usuario.desativarUsuario(encontrar(sc));
                         Persistencia.salvarUsuarios();
                         System.out.println("Funcionário desativado.");
@@ -53,6 +62,26 @@ public class MenuAdministracao {
                 System.out.println("Erro ao salvar os dados: " + e.getMessage());
             }
         } while (!opcao.equals("0"));
+    }
+
+    private static boolean podeConsultar(NivelAcesso nivel) {
+        return nivel == NivelAcesso.ADM_PADRAO
+                || nivel == NivelAcesso.ADM_AVANCADO
+                || nivel == NivelAcesso.ADM_TOTAL;
+    }
+
+    private static boolean podeCadastrarEditar(NivelAcesso nivel) {
+        return nivel == NivelAcesso.ADM_AVANCADO || nivel == NivelAcesso.ADM_TOTAL;
+    }
+
+    private static boolean podeDesativar(NivelAcesso nivel) {
+        return nivel == NivelAcesso.ADM_TOTAL;
+    }
+
+    private static void exigir(boolean permitido) {
+        if (!permitido) {
+            throw new IllegalArgumentException("Você não tem permissão para esta operação.");
+        }
     }
 
     private static void cadastrar(Scanner sc) {
