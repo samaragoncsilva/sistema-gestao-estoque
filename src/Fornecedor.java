@@ -1,34 +1,38 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fornecedor {
+public class Fornecedor extends Usuario {
     private static List<Fornecedor> fornecedores = new ArrayList<>();
     private static int contador = 0;
 
-    private String id;
     private String razaoSocial;
     private String cnpj;
-    private String telefone;
-    private String email;
 
     private Fornecedor(String id, String razaoSocial, String cnpj, String telefone, String email) {
-        this.id = id;
+        super(id, razaoSocial, cnpj, email, telefone, cnpj, "123456", true);
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
-        this.telefone = telefone;
-        this.email = email;
+    }
+
+    public void verUsuario(){
+        verFornecedor();
     }
 
     public void verFornecedor() {
-        System.out.println("Id: " + id);
+        System.out.println("Id: " + getId());
         System.out.println("Razão social: " + razaoSocial);
         System.out.println("CNPJ: " + cnpj);
-        System.out.println("Telefone: " + telefone);
-        System.out.println("Email: " + email);
+        System.out.println("Telefone: " + getTelefone());
+        System.out.println("Email: " + getEmail());
+        System.out.println("Ativo: " + (isAtivo() ? "Sim" : "Não"));
     }
 
     public static Fornecedor criarFornecedor(String razaoSocial, String cnpj, String telefone, String email) {
         validar(razaoSocial, cnpj);
+
+        if(buscarFornecedoresPorCNPJ(cnpj) != null) {
+            throw new IllegalArgumentException("Já existe um fornecedor com o mesmo CNPJ.");
+        }
 
         contador++;
         Fornecedor fornecedor = new Fornecedor("F" + contador, razaoSocial, cnpj, telefone, email);
@@ -43,13 +47,16 @@ public class Fornecedor {
         validar(razaoSocial, cnpj);
 
         fornecedor.razaoSocial = razaoSocial;
+        fornecedor.setNome(razaoSocial);
         fornecedor.cnpj = cnpj;
-        fornecedor.telefone = telefone;
-        fornecedor.email = email;
+        fornecedor.setTelefone(telefone);
+        fornecedor.setEmail(email);
     }
 
     public static void excluirFornecedor(Fornecedor fornecedor) {
-        fornecedores.remove(fornecedor);
+        if (fornecedor!=null){
+            fornecedores.remove(fornecedor);
+        }
     }
 
     public static List<Fornecedor> listarFornecedores() {
@@ -57,7 +64,7 @@ public class Fornecedor {
     }
 
     public static Fornecedor buscarFornecedoresPorCNPJ(String cnpj) {
-        if (cnpj == null) {
+        if (cnpj == null|| cnpj.isBlank()) {
             return null;
         }
 
@@ -70,10 +77,6 @@ public class Fornecedor {
         return null;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getRazaoSocial() {
         return razaoSocial;
     }
@@ -82,13 +85,6 @@ public class Fornecedor {
         return cnpj;
     }
 
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 
     private static void validar(String razaoSocial, String cnpj) {
         if (razaoSocial == null || razaoSocial.isBlank()) {
