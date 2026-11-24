@@ -2,14 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Fornecedor extends Usuario {
-    private static List<Fornecedor> fornecedores = new ArrayList<>();
-    private static int contador = 0;
-
     private String razaoSocial;
     private String cnpj;
 
     private Fornecedor(String id, String razaoSocial, String cnpj, String telefone, String email) {
-        super(id, razaoSocial, cnpj, email, telefone, cnpj, "123456", true);
+        super(id, razaoSocial, cnpj, email, telefone, normalizarCnpj(cnpj), "123456", true);
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
     }
@@ -33,11 +30,8 @@ public class Fornecedor extends Usuario {
         if(buscarFornecedoresPorCNPJ(cnpj) != null) {
             throw new IllegalArgumentException("Já existe um fornecedor com o mesmo CNPJ.");
         }
-
-        contador++;
-        Fornecedor fornecedor = new Fornecedor("F" + contador, razaoSocial, cnpj, telefone, email);
-        fornecedores.add(fornecedor);
-        return fornecedor;
+        String novoId = String.valueOf(Usuario.listarUsuarios().size() + 1);
+        return new Fornecedor(novoId, razaoSocial, cnpj, telefone, email);
     }
 
     public static void editarFornecedor(Fornecedor fornecedor, String razaoSocial, String cnpj, String telefone, String email) {
@@ -46,20 +40,33 @@ public class Fornecedor extends Usuario {
         }
         validar(razaoSocial, cnpj);
 
+        Fornecedor existente = buscarFornecedoresPorCNPJ(cnpj);
+        if (existente != null && existente != fornecedor) {
+            throw new IllegalArgumentException("Já existe um fornecedor com o mesmo CNPJ.");
+        }
+
         fornecedor.razaoSocial = razaoSocial;
         fornecedor.setNome(razaoSocial);
         fornecedor.cnpj = cnpj;
+        fornecedor.setCpf(cnpj);
+        fornecedor.setLogin(normalizarCnpj(cnpj));
         fornecedor.setTelefone(telefone);
         fornecedor.setEmail(email);
     }
 
     public static void excluirFornecedor(Fornecedor fornecedor) {
         if (fornecedor!=null){
-            fornecedores.remove(fornecedor);
+            Usuario.desativarUsuario(fornecedor);
         }
     }
 
     public static List<Fornecedor> listarFornecedores() {
+        List<Fornecedor> fornecedores = new ArrayList<>();
+        for (Usuario usuario : Usuario.listarUsuarios()) {
+            if (usuario instanceof Fornecedor) {
+                fornecedores.add((Fornecedor) usuario);
+            }
+        }
         return fornecedores;
     }
 
@@ -69,7 +76,7 @@ public class Fornecedor extends Usuario {
         }
 
         String cnpjBusca = normalizarCnpj(cnpj);
-        for (Fornecedor fornecedor : fornecedores) {
+        for (Fornecedor fornecedor : listarFornecedores()) {
             if (normalizarCnpj(fornecedor.cnpj).equals(cnpjBusca)) {
                 return fornecedor;
             }
