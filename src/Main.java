@@ -140,10 +140,6 @@ public class Main {
     }
 
     private static void exibirMenuFuncionario(Scanner input, Funcionario funcionario) {
-        if (funcionario.getNivelAcesso() != NivelAcesso.ADM_TOTAL) {
-            System.out.println("\nNão coloquei os menus para outros níveis de acesso, então só o administrador total pode acessar o sistema. Lembrar de arrumar.");
-            return;
-        }
         String option;
 
         do {
@@ -165,7 +161,7 @@ public class Main {
                     MenuAdministracao.exibir(input, funcionario);
                     break;
                 case "2":
-                    MenuProdutos.exibir(input);
+                    MenuProdutos.exibir(input, funcionario);
                     break;
                 case "0":
                     System.out.println("\nSessão encerrada.");
