@@ -2,14 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cliente extends Usuario {
-    private static List<Cliente> clientes = new ArrayList<>();
-    private static int contador = 0;
-
     private String cpfCnpj;
     private boolean pessoaJuridica;
 
     private Cliente(String id, String nome, String cpfCnpj, String telefone, String email) {
-        super(id, nome, cpfCnpj, email, telefone, null, null, true);
+        super(id, nome, cpfCnpj, email, telefone, normalizarDocumento(cpfCnpj), "123456", true);
         this.cpfCnpj = cpfCnpj;
         this.pessoaJuridica = contarDigitos(cpfCnpj) > 11;
     }
@@ -31,10 +28,11 @@ public class Cliente extends Usuario {
     public static Cliente criarCliente(String nome, String cpfCnpj, String telefone, String email) {
         validar(nome, cpfCnpj);
 
-        contador++;
-        Cliente cliente = new Cliente("C" + contador, nome, cpfCnpj, telefone, email);
-        clientes.add(cliente);
-        return cliente;
+        if (buscarClientePorDocumento(cpfCnpj) != null) {
+            throw new IllegalArgumentException("Já existe um cliente com o mesmo documento.");
+        }
+        String novoId = String.valueOf(Usuario.listarUsuarios().size() + 1);
+        return new Cliente(novoId, nome, cpfCnpj, telefone, email);
     }
 
     public static void editarCliente(Cliente cliente, String nome, String cpfCnpj, String telefone, String email) {
@@ -42,6 +40,11 @@ public class Cliente extends Usuario {
             throw new IllegalArgumentException("O cliente é obrigatório.");
         }
         validar(nome, cpfCnpj);
+
+        Cliente existente = buscarClientePorDocumento(cpfCnpj);
+        if (existente != null && existente != cliente) {
+            throw new IllegalArgumentException("Já existe um cliente com o mesmo documento.");
+        }
 
         cliente.setNome(nome);
         cliente.setCpf(cpfCnpj);
@@ -52,10 +55,18 @@ public class Cliente extends Usuario {
     }
 
     public static void excluirCliente(Cliente cliente) {
-        clientes.remove(cliente);
+        if(cliente!=null){
+            Usuario.desativarUsuario(cliente);;
+        }
     }
 
     public static List<Cliente> listarClientes() {
+        List<Cliente> clientes = new ArrayList<>();
+        for(Usuario usuario : Usuario.listarUsuarios()){
+            if(usuario instanceof Cliente){
+                clientes.add((Cliente) usuario);
+            }
+        }
         return clientes;
     }
 
@@ -65,7 +76,7 @@ public class Cliente extends Usuario {
         }
 
         String documentoBusca = normalizarDocumento(cpfCnpj);
-        for (Cliente cliente : clientes) {
+        for (Cliente cliente : listarClientes()) {
             if (normalizarDocumento(cliente.cpfCnpj).equals(documentoBusca)) {
                 return cliente;
             }
@@ -81,6 +92,7 @@ public class Cliente extends Usuario {
         validarDocumento(cpfCnpj);
         this.cpfCnpj = cpfCnpj;
         setCpf(cpfCnpj);
+        setLogin(normalizarDocumento(cpfCnpj));
         this.pessoaJuridica = contarDigitos(cpfCnpj) > 11;
     }
 
