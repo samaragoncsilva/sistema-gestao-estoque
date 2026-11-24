@@ -36,7 +36,6 @@ public abstract class Usuario implements Serializable {
         System.out.println("Email: " + this.email);
         System.out.println("Telefone: " + this.telefone);
         System.out.println("Login: " + this.login);
-        System.out.println("Senha: " + this.senha);
         System.out.println("Ativo: " + this.ativo);
     }
 
