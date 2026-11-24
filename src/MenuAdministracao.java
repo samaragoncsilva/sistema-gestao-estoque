@@ -56,6 +56,8 @@ public class MenuAdministracao {
                     default:
                         System.out.println("Opção inválida.");
                 }
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um número válido.");
             } catch (IllegalArgumentException e) {
                 System.out.println("Erro: " + e.getMessage());
             } catch (IOException e) {
@@ -84,17 +86,20 @@ public class MenuAdministracao {
         }
     }
 
-    // Só ADM_TOTAL pode atribuir o nível ADM_TOTAL
     private static void validarNivelAtribuido(NivelAcesso nivelLogado, NivelAcesso nivelEscolhido) {
         if (nivelEscolhido == NivelAcesso.ADM_TOTAL && nivelLogado != NivelAcesso.ADM_TOTAL) {
             throw new IllegalArgumentException("Apenas ADM_TOTAL pode atribuir o nível ADM_TOTAL.");
         }
     }
 
-    // Não permite login repetido (o próprio funcionário pode manter o seu)
     private static void validarLoginUnico(String login, Funcionario atual) {
+        if (login == null || login.trim().isEmpty()) {
+            throw new IllegalArgumentException("O login não pode ser vazio.");
+        }
+        String loginLimpo = login.trim();
         for (Usuario u : Usuario.listarUsuarios()) {
-            if (u != atual && u.getLogin().equals(login)) {
+            boolean mesmoUsuario = atual != null && u.getId().equals(atual.getId());
+            if (!mesmoUsuario && u.getLogin() != null && u.getLogin().trim().equalsIgnoreCase(loginLimpo)) {
                 throw new IllegalArgumentException("Já existe um usuário com esse login.");
             }
         }
@@ -116,11 +121,15 @@ public class MenuAdministracao {
         String senha = sc.nextLine();
         NivelAcesso nivelNovo = lerNivel(sc, "Nível de acesso");
         validarNivelAtribuido(nivelLogado, nivelNovo);
-        Funcionario.criarFuncionario(nome, cpf, email, telefone, login, senha, nivelNovo).verFuncionario();
+        Funcionario.criarFuncionario(nome, cpf, email, telefone, login.trim(), senha, nivelNovo).verFuncionario();
     }
 
     private static void editar(Scanner sc, NivelAcesso nivelLogado) {
         Funcionario funcionario = encontrar(sc);
+        if (funcionario.getNivelAcesso() == NivelAcesso.ADM_TOTAL && nivelLogado != NivelAcesso.ADM_TOTAL) {
+            throw new IllegalArgumentException("Apenas ADM_TOTAL pode editar um usuário ADM_TOTAL.");
+        }
+
         System.out.print("Novo nome: ");
         String nome = sc.nextLine();
         System.out.print("Novo CPF: ");
@@ -137,7 +146,7 @@ public class MenuAdministracao {
         boolean ativo = funcionario.isAtivo();
         NivelAcesso nivelNovo = lerNivel(sc, "Novo nível de acesso");
         validarNivelAtribuido(nivelLogado, nivelNovo);
-        Funcionario.editarFuncionario(funcionario, nome, cpf, email, telefone, login, senha, ativo, nivelNovo);
+        Funcionario.editarFuncionario(funcionario, nome, cpf, email, telefone, login.trim(), senha, ativo, nivelNovo);
         funcionario.verFuncionario();
     }
 
