@@ -46,8 +46,8 @@ public class Cliente extends Usuario {
             throw new IllegalArgumentException("Já existe um cliente com o mesmo documento.");
         }
 
-        cliente.setNome(nome);
         cliente.setCpfCnpj(cpfCnpj);
+        cliente.setNome(nome);
         cliente.setTelefone(telefone);
         cliente.setEmail(email);
     }
@@ -88,9 +88,9 @@ public class Cliente extends Usuario {
 
     public void setCpfCnpj(String cpfCnpj) {
         validarDocumento(cpfCnpj);
+        setLogin(normalizarDocumento(cpfCnpj));
         this.cpfCnpj = cpfCnpj;
         setCpf(cpfCnpj);
-        setLogin(normalizarDocumento(cpfCnpj));
         this.pessoaJuridica = contarDigitos(cpfCnpj) > 11;
     }
 

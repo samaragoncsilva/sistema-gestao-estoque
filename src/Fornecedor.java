@@ -45,11 +45,11 @@ public class Fornecedor extends Usuario {
             throw new IllegalArgumentException("Já existe um fornecedor com o mesmo CNPJ.");
         }
 
+        fornecedor.setLogin(normalizarCnpj(cnpj));
         fornecedor.razaoSocial = razaoSocial;
         fornecedor.setNome(razaoSocial);
         fornecedor.cnpj = cnpj;
         fornecedor.setCpf(cnpj);
-        fornecedor.setLogin(normalizarCnpj(cnpj));
         fornecedor.setTelefone(telefone);
         fornecedor.setEmail(email);
     }
