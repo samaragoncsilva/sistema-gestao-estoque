@@ -146,6 +146,7 @@ public class Main {
             System.out.println("\n====== MENU DO FUNCIONÁRIO ======\n");
             System.out.println("1 - Administração de funcionários");
             System.out.println("2 - Produtos e estoque");
+            System.out.println("3 - Clientes e fornecedores");
             System.out.println("0 - Encerrar sessão");
             System.out.print("\nEscolha uma opção: ");
 
@@ -162,6 +163,9 @@ public class Main {
                     break;
                 case "2":
                     MenuProdutos.exibir(input, funcionario);
+                    break;
+                case "3":
+                    MenuCadastros.exibir(input, funcionario);
                     break;
                 case "0":
                     System.out.println("\nSessão encerrada.");
