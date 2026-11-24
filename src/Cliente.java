@@ -47,11 +47,9 @@ public class Cliente extends Usuario {
         }
 
         cliente.setNome(nome);
-        cliente.setCpf(cpfCnpj);
+        cliente.setCpfCnpj(cpfCnpj);
         cliente.setTelefone(telefone);
         cliente.setEmail(email);
-        cliente.cpfCnpj = cpfCnpj;
-        cliente.pessoaJuridica = contarDigitos(cpfCnpj) > 11;
     }
 
     public static void excluirCliente(Cliente cliente) {
