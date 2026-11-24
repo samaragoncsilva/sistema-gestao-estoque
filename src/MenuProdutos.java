@@ -4,7 +4,8 @@ import java.util.Scanner;
 
 public class MenuProdutos {
 
-    public static void exibir(Scanner sc) {
+    public static void exibir(Scanner sc, Funcionario funcionario) {
+        NivelAcesso nivel = funcionario.getNivelAcesso();
         String opcao;
         do {
             System.out.println("\n=== PRODUTOS E ESTOQUE ===");
@@ -24,33 +25,55 @@ public class MenuProdutos {
 
             try {
                 switch (opcao) {
-                    case "1" -> cadastrar(sc);
-                    case "2" -> mostrar(Produto.listarProdutos());
-                    case "3" -> encontrar(sc).verProduto();
+                    case "1" -> {
+                        exigir(podeCadastrarEditar(nivel));
+                        cadastrar(sc);
+                    }
+                    case "2" -> {
+                        exigir(podeConsultar(nivel));
+                        mostrar(Produto.listarProdutos());
+                    }
+                    case "3" -> {
+                        exigir(podeConsultar(nivel));
+                        encontrar(sc).verProduto();
+                    }
                     case "4" -> {
+                        exigir(podeConsultar(nivel));
                         System.out.print("Nome: ");
                         mostrar(Produto.buscarProdutosPorNome(sc.nextLine()));
                     }
-                    case "5" -> editar(sc);
+                    case "5" -> {
+                        exigir(podeCadastrarEditar(nivel));
+                        editar(sc);
+                    }
                     case "6" -> {
+                        exigir(nivel == NivelAcesso.ADM_TOTAL);
                         Produto.excluirProduto(encontrar(sc));
                         salvar();
                         System.out.println("Produto excluído.");
                     }
                     case "7" -> {
+                        exigir(podeDarEntrada(nivel));
                         Produto produto = encontrar(sc);
                         produto.adicionarEstoque(lerInt(sc, "Quantidade de entrada: "));
                         salvar();
                         produto.verProduto();
                     }
                     case "8" -> {
+                        exigir(podeDarSaida(nivel));
                         Produto produto = encontrar(sc);
                         produto.retirarEstoque(lerInt(sc, "Quantidade de saída: "));
                         salvar();
                         produto.verProduto();
                     }
-                    case "9" -> mostrar(Produto.listarProdutosComEstoqueBaixo());
-                    case "10" -> mostrar(Produto.gerarRelatorioEstoque());
+                    case "9" -> {
+                        exigir(podeConsultar(nivel));
+                        mostrar(Produto.listarProdutosComEstoqueBaixo());
+                    }
+                    case "10" -> {
+                        exigir(podeGerarRelatorio(nivel));
+                        mostrar(Produto.gerarRelatorioEstoque());
+                    }
                     case "0" -> { }
                     default -> System.out.println("Opção inválida.");
                 }
@@ -58,6 +81,32 @@ public class MenuProdutos {
                 System.out.println("Erro: " + e.getMessage());
             }
         } while (!opcao.equals("0"));
+    }
+
+    private static boolean podeConsultar(NivelAcesso nivel) {
+        return List.of(NivelAcesso.ADM_PADRAO, NivelAcesso.ADM_AVANCADO, NivelAcesso.ADM_TOTAL, NivelAcesso.GERENTE).contains(nivel);
+    }
+
+    private static boolean podeCadastrarEditar(NivelAcesso nivel) {
+        return List.of(NivelAcesso.ADM_PADRAO, NivelAcesso.ADM_AVANCADO, NivelAcesso.ADM_TOTAL).contains(nivel);
+    }
+
+    private static boolean podeDarEntrada(NivelAcesso nivel) {
+        return List.of(NivelAcesso.ADM_AVANCADO, NivelAcesso.ADM_TOTAL, NivelAcesso.ESTOQUISTA).contains(nivel);
+    }
+
+    private static boolean podeDarSaida(NivelAcesso nivel) {
+        return List.of(NivelAcesso.ADM_AVANCADO, NivelAcesso.ADM_TOTAL, NivelAcesso.ESTOQUISTA, NivelAcesso.VENDEDOR).contains(nivel);
+    }
+
+    private static boolean podeGerarRelatorio(NivelAcesso nivel) {
+        return List.of(NivelAcesso.ADM_AVANCADO, NivelAcesso.ADM_TOTAL, NivelAcesso.GERENTE).contains(nivel);
+    }
+
+    private static void exigir(boolean permitido) {
+        if (!permitido) {
+            throw new IllegalArgumentException("Você não tem permissão para esta operação.");
+        }
     }
 
     private static void cadastrar(Scanner sc) {
