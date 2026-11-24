@@ -28,7 +28,7 @@ public class MenuAdministracao {
                 switch (opcao) {
                     case "1":
                         exigir(podeCadastrarEditar(nivel));
-                        cadastrar(sc);
+                        cadastrar(sc, nivel);
                         Persistencia.salvarUsuarios();
                         break;
                     case "2":
@@ -42,7 +42,7 @@ public class MenuAdministracao {
                         break;
                     case "5":
                         exigir(podeCadastrarEditar(nivel));
-                        editar(sc);
+                        editar(sc, nivel);
                         Persistencia.salvarUsuarios();
                         break;
                     case "6":
@@ -84,7 +84,23 @@ public class MenuAdministracao {
         }
     }
 
-    private static void cadastrar(Scanner sc) {
+    // Só ADM_TOTAL pode atribuir o nível ADM_TOTAL
+    private static void validarNivelAtribuido(NivelAcesso nivelLogado, NivelAcesso nivelEscolhido) {
+        if (nivelEscolhido == NivelAcesso.ADM_TOTAL && nivelLogado != NivelAcesso.ADM_TOTAL) {
+            throw new IllegalArgumentException("Apenas ADM_TOTAL pode atribuir o nível ADM_TOTAL.");
+        }
+    }
+
+    // Não permite login repetido (o próprio funcionário pode manter o seu)
+    private static void validarLoginUnico(String login, Funcionario atual) {
+        for (Usuario u : Usuario.listarUsuarios()) {
+            if (u != atual && u.getLogin().equals(login)) {
+                throw new IllegalArgumentException("Já existe um usuário com esse login.");
+            }
+        }
+    }
+
+    private static void cadastrar(Scanner sc, NivelAcesso nivelLogado) {
         System.out.print("Nome: ");
         String nome = sc.nextLine();
         System.out.print("CPF: ");
@@ -95,13 +111,15 @@ public class MenuAdministracao {
         String telefone = sc.nextLine();
         System.out.print("Login: ");
         String login = sc.nextLine();
+        validarLoginUnico(login, null);
         System.out.print("Senha: ");
         String senha = sc.nextLine();
-        NivelAcesso nivel = lerNivel(sc, "Nível de acesso");
-        Funcionario.criarFuncionario(nome, cpf, email, telefone, login, senha, nivel).verFuncionario();
+        NivelAcesso nivelNovo = lerNivel(sc, "Nível de acesso");
+        validarNivelAtribuido(nivelLogado, nivelNovo);
+        Funcionario.criarFuncionario(nome, cpf, email, telefone, login, senha, nivelNovo).verFuncionario();
     }
 
-    private static void editar(Scanner sc) {
+    private static void editar(Scanner sc, NivelAcesso nivelLogado) {
         Funcionario funcionario = encontrar(sc);
         System.out.print("Novo nome: ");
         String nome = sc.nextLine();
@@ -113,11 +131,13 @@ public class MenuAdministracao {
         String telefone = sc.nextLine();
         System.out.print("Novo login: ");
         String login = sc.nextLine();
+        validarLoginUnico(login, funcionario);
         System.out.print("Nova senha: ");
         String senha = sc.nextLine();
         boolean ativo = funcionario.isAtivo();
-        NivelAcesso nivel = lerNivel(sc, "Novo nível de acesso");
-        Funcionario.editarFuncionario(funcionario, nome, cpf, email, telefone, login, senha, ativo, nivel);
+        NivelAcesso nivelNovo = lerNivel(sc, "Novo nível de acesso");
+        validarNivelAtribuido(nivelLogado, nivelNovo);
+        Funcionario.editarFuncionario(funcionario, nome, cpf, email, telefone, login, senha, ativo, nivelNovo);
         funcionario.verFuncionario();
     }
 
