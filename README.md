@@ -6,7 +6,7 @@ Projeto acadêmico desenvolvido em **Java** para a disciplina de **Programação
 
 - **Funcionários:** cadastro, consulta, edição, listagem por nível de acesso e desativação de contas.
 - **Clientes e fornecedores:** cadastro, consulta por documento, edição e desativação, preservando os registros.
-- **Produtos:** cadastro, consulta, edição e exclusão; entradas e saídas de estoque, com impedimento de saídas superiores à quantidade disponível.
+- **Produtos:** cadastro com vinculação obrigatória a um fornecedor ativo, consulta, edição e exclusão; entradas e saídas de estoque, com impedimento de saídas superiores à quantidade disponível.
 - **Estoque:** identificação de produtos com estoque baixo e relatório de produtos ordenado por quantidade.
 - **Autenticação e permissões:** acesso por login e senha, com autorização conforme os níveis `ADM_PADRAO`, `ADM_AVANCADO`, `ADM_TOTAL`, `GERENTE`, `ESTOQUISTA` e `VENDEDOR`.
 - **Persistência:** armazenamento local dos dados para recuperação em execuções posteriores.
@@ -28,6 +28,7 @@ java -cp src Main
 ```
 
 Na primeira execução, sem usuários cadastrados, o programa solicita a criação de um administrador inicial com nível `ADM_TOTAL`. Depois disso, o acesso é feito pela opção **Fazer login**.
+Para cadastrar produtos, é necessário cadastrar previamente um fornecedor ativo. Cada produto fica vinculado a um fornecedor, cuja razão social é apresentada nas consultas.
 
 ## Armazenamento dos dados
 
