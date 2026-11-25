@@ -13,13 +13,14 @@ public class Produto implements Serializable {
     private double precoVenda;
     private int quantidade;
     private int estoqueMinimo;
+    private Fornecedor fornecedor;
 
     public void verProduto() {
         System.out.println(id + " | " + nome + " | " + descricao
                 + " | Compra: R$ " + String.format("%.2f", precoCompra)
                 + " | Venda: R$ " + String.format("%.2f", precoVenda)
                 + " | Qtd: " + quantidade + " | Mín: " + estoqueMinimo
-                + (verificarEstoqueMinimo() ? " | ESTOQUE BAIXO" : ""));
+                + (verificarEstoqueMinimo() ? " | ESTOQUE BAIXO" : "") + " | Fornecedor: " + (fornecedor != null ? fornecedor.getRazaoSocial() : "Não vinculado"));
     }
 
     public static Produto criarProduto(String nome, String descricao, double precoCompra, double precoVenda, int quantidade, int estoqueMinimo) {
@@ -122,6 +123,17 @@ public class Produto implements Serializable {
                 contador = numero;
             }
         }
+    }
+
+    public Fornecedor getFornecedor() {
+        return fornecedor;
+    }
+
+    public void setFornecedor(Fornecedor fornecedor) {
+        if (fornecedor == null) {
+            throw new IllegalArgumentException("O fornecedor é obrigatório.");
+        }
+        this.fornecedor = fornecedor;
     }
 
     private static void validar(String nome, double precoCompra, double precoVenda, int estoqueMinimo) {

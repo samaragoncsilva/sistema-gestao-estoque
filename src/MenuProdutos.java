@@ -122,7 +122,20 @@ public class MenuProdutos {
         double precoVenda = lerDouble(sc, "Preço de venda: ");
         int quantidade = lerInt(sc, "Quantidade inicial: ");
         int estoqueMinimo = lerInt(sc, "Estoque mínimo: ");
+        System.out.print("CNPJ do fornecedor: ");
+        String cnpj = sc.nextLine().trim();
+        Fornecedor fornecedor = Fornecedor.buscarFornecedoresPorCNPJ(cnpj);
+        
+        if (fornecedor == null) {
+            throw new IllegalArgumentException("Fornecedor não encontrado.");
+        }
+
+        if (!fornecedor.isAtivo()) {
+            throw new IllegalArgumentException("Fornecedor desativado.");
+        }
+
         Produto produto = Produto.criarProduto(nome, descricao, precoCompra, precoVenda, quantidade, estoqueMinimo);
+        produto.setFornecedor(fornecedor);
         salvar();
         System.out.println();
         produto.verProduto();

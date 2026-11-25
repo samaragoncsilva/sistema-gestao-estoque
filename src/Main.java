@@ -64,6 +64,31 @@ public class Main {
             return;
         }
 
+        for (Produto produto : Produto.listarProdutos()) {
+            Fornecedor fornecedorSalvo = produto.getFornecedor();
+
+            if (fornecedorSalvo == null) {
+                System.out.println("Erro: existe produto sem fornecedor vinculado.");
+                return;
+            }
+
+            Fornecedor fornecedorAtual = null;
+
+            for (Fornecedor candidato : Fornecedor.listarFornecedores()) {
+                if (candidato.getId().equals(fornecedorSalvo.getId())) {
+                    fornecedorAtual = candidato;
+                    break;
+                }
+            }
+
+            if (fornecedorAtual == null) {
+                System.out.println("Erro: fornecedor vinculado ao produto não encontrado.");
+                return;
+            }
+
+            produto.setFornecedor(fornecedorAtual);
+        }
+
         Scanner input = new Scanner(System.in);
         
         if (Usuario.listarUsuarios().isEmpty()) {
