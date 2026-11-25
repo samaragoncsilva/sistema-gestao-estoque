@@ -10,8 +10,10 @@ public class Funcionario extends Usuario {
     }
 
     public void verFuncionario() {
+        System.out.println("\n-------- FUNCIONÁRIO --------");
         super.verUsuario();
         System.out.println("Nível de Acesso: " + this.nivelAcesso);
+        System.out.println("-----------------------------");
     }
 
     public static Funcionario criarFuncionario(String nome, String cpf, String email, String telefone, String login, String senha, NivelAcesso nivelAcesso) {

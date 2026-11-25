@@ -8,7 +8,7 @@ public class MenuProdutos {
         NivelAcesso nivel = funcionario.getNivelAcesso();
         String opcao;
         do {
-            System.out.println("\n=== PRODUTOS E ESTOQUE ===");
+            System.out.println("\n====== PRODUTOS E ESTOQUE ======\n");
             System.out.println("1 - Cadastrar produto");
             System.out.println("2 - Listar produtos");
             System.out.println("3 - Buscar por ID");
@@ -20,7 +20,7 @@ public class MenuProdutos {
             System.out.println("9 - Produtos com estoque baixo");
             System.out.println("10 - Relatório de estoque");
             System.out.println("0 - Voltar");
-            System.out.print("Opção: ");
+            System.out.print("\nEscolha uma opção: ");
             opcao = sc.nextLine().trim();
 
             try {
@@ -35,7 +35,9 @@ public class MenuProdutos {
                     }
                     case "3" -> {
                         exigir(podeConsultar(nivel));
-                        encontrar(sc).verProduto();
+                        Produto produto = encontrar(sc);
+                        System.out.println();
+                        produto.verProduto();
                     }
                     case "4" -> {
                         exigir(podeConsultar(nivel));
@@ -57,6 +59,7 @@ public class MenuProdutos {
                         Produto produto = encontrar(sc);
                         produto.adicionarEstoque(lerInt(sc, "Quantidade de entrada: "));
                         salvar();
+                        System.out.println();
                         produto.verProduto();
                     }
                     case "8" -> {
@@ -64,6 +67,7 @@ public class MenuProdutos {
                         Produto produto = encontrar(sc);
                         produto.retirarEstoque(lerInt(sc, "Quantidade de saída: "));
                         salvar();
+                        System.out.println();
                         produto.verProduto();
                     }
                     case "9" -> {
@@ -120,6 +124,7 @@ public class MenuProdutos {
         int estoqueMinimo = lerInt(sc, "Estoque mínimo: ");
         Produto produto = Produto.criarProduto(nome, descricao, precoCompra, precoVenda, quantidade, estoqueMinimo);
         salvar();
+        System.out.println();
         produto.verProduto();
     }
 
@@ -134,6 +139,7 @@ public class MenuProdutos {
         int estoqueMinimo = lerInt(sc, "Novo estoque mínimo: ");
         Produto.editarProduto(produto, nome, descricao, precoCompra, precoVenda, estoqueMinimo);
         salvar();
+        System.out.println();
         produto.verProduto();
     }
 
@@ -157,7 +163,9 @@ public class MenuProdutos {
     private static void mostrar(List<Produto> lista) {
         if (lista.isEmpty()) {
             System.out.println("Nenhum produto encontrado.");
+            return;
         }
+        System.out.println();
         for (Produto produto : lista) {
             produto.verProduto();
         }

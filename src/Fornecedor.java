@@ -16,12 +16,14 @@ public class Fornecedor extends Usuario {
     }
 
     public void verFornecedor() {
-        System.out.println("Id: " + getId());
+        System.out.println("\n-------- FORNECEDOR --------");
+        System.out.println("ID: " + getId());
         System.out.println("Razão social: " + razaoSocial);
         System.out.println("CNPJ: " + cnpj);
         System.out.println("Telefone: " + getTelefone());
-        System.out.println("Email: " + getEmail());
+        System.out.println("E-mail: " + getEmail());
         System.out.println("Ativo: " + (isAtivo() ? "Sim" : "Não"));
+        System.out.println("-----------------------------");
     }
 
     public static Fornecedor criarFornecedor(String razaoSocial, String cnpj, String telefone, String email) {

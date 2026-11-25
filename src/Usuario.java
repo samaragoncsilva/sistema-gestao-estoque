@@ -44,13 +44,13 @@ public abstract class Usuario implements Serializable {
     }
 
     public void verUsuario() {
-        System.out.println("Id: " + this.id);
+        System.out.println("ID: " + this.id);
         System.out.println("Nome: " + this.nome);
-        System.out.println("Cpf: " + this.cpf);
-        System.out.println("Email: " + this.email);
+        System.out.println("CPF: " + this.cpf);
+        System.out.println("E-mail: " + this.email);
         System.out.println("Telefone: " + this.telefone);
         System.out.println("Login: " + this.login);
-        System.out.println("Ativo: " + this.ativo);
+        System.out.println("Ativo: " + (this.ativo ? "Sim" : "Não"));
     }
 
     public void alterarSenha(String novaSenha) {

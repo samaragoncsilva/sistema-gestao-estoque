@@ -13,7 +13,7 @@ public class MenuAdministracao {
 
         String opcao;
         do {
-            System.out.println("\n=== ADMINISTRAÇÃO DE FUNCIONÁRIOS ===");
+            System.out.println("\n====== ADMINISTRAÇÃO DE FUNCIONÁRIOS ======\n");
             System.out.println("1 - Cadastrar funcionário");
             System.out.println("2 - Listar funcionários");
             System.out.println("3 - Listar por nível de acesso");
@@ -21,7 +21,7 @@ public class MenuAdministracao {
             System.out.println("5 - Editar funcionário");
             System.out.println("6 - Desativar funcionário");
             System.out.println("0 - Voltar");
-            System.out.print("Opção: ");
+            System.out.print("\nEscolha uma opção: ");
             opcao = sc.nextLine().trim();
 
             try {

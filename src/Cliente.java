@@ -17,12 +17,15 @@ public class Cliente extends Usuario {
     }
 
     public void verCliente() {
-        System.out.println("Id: " + getId());
+        System.out.println("\n-------- CLIENTE --------");
+        System.out.println("ID: " + getId());
         System.out.println("Nome: " + getNome());
-        System.out.println("Cpf/Cnpj: " + cpfCnpj);
+        System.out.println("CPF/CNPJ: " + cpfCnpj);
         System.out.println("Telefone: " + getTelefone());
-        System.out.println("Email: " + getEmail());
-        System.out.println("Pessoa jurídica: " + pessoaJuridica);
+        System.out.println("E-mail: " + getEmail());
+        System.out.println("Pessoa jurídica: " + (pessoaJuridica ? "Sim" : "Não"));
+        System.out.println("Ativo: " + (isAtivo() ? "Sim" : "Não"));
+        System.out.println("-----------------------------");
     }
 
     public static Cliente criarCliente(String nome, String cpfCnpj, String telefone, String email) {

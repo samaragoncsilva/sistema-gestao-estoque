@@ -12,7 +12,7 @@ public class MenuCadastros {
 
         String opcao;
         do {
-            System.out.println("\n=== CADASTRO DE CLIENTES E FORNECEDORES ===");
+            System.out.println("\n====== CADASTRO DE CLIENTES E FORNECEDORES ======\n");
             System.out.println("1 - Cadastrar cliente");
             System.out.println("2 - Listar clientes");
             System.out.println("3 - Buscar cliente por documento");
@@ -24,7 +24,7 @@ public class MenuCadastros {
             System.out.println("9 - Editar fornecedor");
             System.out.println("10 - Desativar fornecedor");
             System.out.println("0 - Voltar");
-            System.out.print("Opção: ");
+            System.out.print("\nEscolha uma opção: ");
             opcao = sc.nextLine().trim();
 
             try {
@@ -191,7 +191,6 @@ public class MenuCadastros {
         }
         for (Cliente cliente : clientes) {
             cliente.verCliente();
-            System.out.println("Ativo: " + (cliente.isAtivo() ? "Sim" : "Não"));
         }
     }
 
@@ -206,7 +205,7 @@ public class MenuCadastros {
     }
 
     private static void exibirCredenciais(Usuario usuario) {
-        System.out.println("Credenciais iniciais — anote e entregue ao titular da conta:");
+        System.out.println("Credenciais iniciais - anote e entregue ao titular da conta:");
         System.out.println("Login: " + usuario.getLogin());
         System.out.println("Senha: " + usuario.getSenha());
     }
